@@ -28,6 +28,7 @@ entity AxiPcieReg is
    generic (
       TPD_G            : time                   := 1 ns;
       BUILD_INFO_G     : BuildInfoType;
+      SYNTH_MODE_G     : string                 := "xpm";
       XIL_DEVICE_G     : string                 := "7SERIES";
       BOOT_PROM_G      : string                 := "BPI";
       DRIVER_TYPE_ID_G : slv(31 downto 0)       := x"00000000";
@@ -403,6 +404,7 @@ begin
       generic map (
          TPD_G           => TPD_G,
          COMMON_CLK_G    => false,
+         SYNTH_MODE_G    => SYNTH_MODE_G,
          NUM_ADDR_BITS_G => 24)
       port map (
          -- Slave Interface

@@ -2,7 +2,7 @@
 -- File       : AxiPcieDma.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2017-03-06
--- Last update: 2018-02-12
+-- Last update: 2018-06-29
 -------------------------------------------------------------------------------
 -- Description: Wrapper for AXIS DMA Engine
 -------------------------------------------------------------------------------
@@ -30,6 +30,8 @@ entity AxiPcieDma is
    generic (
       TPD_G             : time                   := 1 ns;
       SIMULATION_G      : boolean                := false;
+      SYNTH_MODE_G      : string                 := "xpm";
+      MEMORY_TYPE_G     : string                 := "block";
       DMA_SIZE_G        : positive range 1 to 16 := 1;
       INT_PIPE_STAGES_G : natural range 0 to 1   := 1;
       PIPE_STAGES_G     : natural range 0 to 1   := 1;
@@ -171,6 +173,8 @@ begin
    U_V2Gen : entity work.AxiStreamDmaV2
       generic map (
          TPD_G             => TPD_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,
+         MEMORY_TYPE_G     => MEMORY_TYPE_G,
          DESC_AWIDTH_G     => 12,       -- 4096 entries
          DESC_ARB_G        => DESC_ARB_G,
          AXIL_BASE_ADDR_G  => x"00000000",
@@ -230,7 +234,8 @@ begin
             SLAVE_READY_EN_G    => true,
             VALID_THOLD_G       => 1,
             -- FIFO configurations
-            BRAM_EN_G           => true,
+            SYNTH_MODE_G        => SYNTH_MODE_G,
+            MEMORY_TYPE_G       => MEMORY_TYPE_G,
             GEN_SYNC_FIFO_G     => true,
             CASCADE_SIZE_G      => 1,
             FIFO_ADDR_WIDTH_G   => 9,
@@ -254,21 +259,21 @@ begin
       ---------------------------
       U_ObFifo : entity work.AxiStreamFifoV2
          generic map (
+            -- General Configurations
             TPD_G               => TPD_G,
             INT_PIPE_STAGES_G   => INT_PIPE_STAGES_G,
             PIPE_STAGES_G       => PIPE_STAGES_G,
             SLAVE_READY_EN_G    => false,
             VALID_THOLD_G       => 1,
-            BRAM_EN_G           => true,
-            XIL_DEVICE_G        => "7SERIES",
-            USE_BUILT_IN_G      => false,
+            -- FIFO configurations
+            SYNTH_MODE_G        => SYNTH_MODE_G,
+            MEMORY_TYPE_G       => MEMORY_TYPE_G,
             GEN_SYNC_FIFO_G     => true,
-            ALTERA_SYN_G        => false,
-            ALTERA_RAM_G        => "M9K",
             CASCADE_SIZE_G      => 1,
             FIFO_ADDR_WIDTH_G   => 9,
             FIFO_FIXED_THRESH_G => true,
             FIFO_PAUSE_THRESH_G => 300,  -- 1800 byte buffer before pause and 1696 byte of buffer before FIFO FULL
+            -- AXI Stream Port Configurations
             SLAVE_AXI_CONFIG_G  => INT_DMA_AXIS_CONFIG_C,
             MASTER_AXI_CONFIG_G => DMA_AXIS_CONFIG_C)
          port map (
@@ -303,11 +308,7 @@ begin
       U_AxiReadPathFifo : entity work.AxiReadPathFifo
          generic map (
             TPD_G                  => TPD_G,
-            XIL_DEVICE_G           => "7SERIES",
-            USE_BUILT_IN_G         => false,
             GEN_SYNC_FIFO_G        => true,
-            ALTERA_SYN_G           => false,
-            ALTERA_RAM_G           => "M9K",
             ADDR_LSB_G             => 3,
             ID_FIXED_EN_G          => true,
             SIZE_FIXED_EN_G        => true,
@@ -316,13 +317,14 @@ begin
             LOCK_FIXED_EN_G        => true,
             PROT_FIXED_EN_G        => true,
             CACHE_FIXED_EN_G       => true,
-            ADDR_BRAM_EN_G         => false,
+            ADDR_MEMORY_TYPE_G     => "distributed",
             ADDR_CASCADE_SIZE_G    => 1,
             ADDR_FIFO_ADDR_WIDTH_G => 4,
-            DATA_BRAM_EN_G         => false,
+            DATA_MEMORY_TYPE_G     => "distributed",
             DATA_CASCADE_SIZE_G    => 1,
             DATA_FIFO_ADDR_WIDTH_G => 4,
-            AXI_CONFIG_G           => DMA_AXI_CONFIG_C)
+            AXI_CONFIG_G           => DMA_AXI_CONFIG_C,
+            SYNTH_MODE_G           => SYNTH_MODE_G)
          port map (
             sAxiClk        => axiClk,
             sAxiRst        => axiReset(i),
@@ -339,11 +341,7 @@ begin
       U_AxiWritePathFifo : entity work.AxiWritePathFifo
          generic map (
             TPD_G                    => TPD_G,
-            XIL_DEVICE_G             => "7SERIES",
-            USE_BUILT_IN_G           => false,
             GEN_SYNC_FIFO_G          => true,
-            ALTERA_SYN_G             => false,
-            ALTERA_RAM_G             => "M9K",
             ADDR_LSB_G               => 3,
             ID_FIXED_EN_G            => true,
             SIZE_FIXED_EN_G          => true,
@@ -352,17 +350,18 @@ begin
             LOCK_FIXED_EN_G          => true,
             PROT_FIXED_EN_G          => true,
             CACHE_FIXED_EN_G         => true,
-            ADDR_BRAM_EN_G           => true,
+            ADDR_MEMORY_TYPE_G       => "block",
             ADDR_CASCADE_SIZE_G      => 1,
             ADDR_FIFO_ADDR_WIDTH_G   => 9,
-            DATA_BRAM_EN_G           => true,
+            DATA_MEMORY_TYPE_G       => "block",
             DATA_CASCADE_SIZE_G      => 1,
             DATA_FIFO_ADDR_WIDTH_G   => 9,
             DATA_FIFO_PAUSE_THRESH_G => 456,
-            RESP_BRAM_EN_G           => false,
+            RESP_MEMORY_TYPE_G       => "distributed",
             RESP_CASCADE_SIZE_G      => 1,
             RESP_FIFO_ADDR_WIDTH_G   => 4,
-            AXI_CONFIG_G             => DMA_AXI_CONFIG_C)
+            AXI_CONFIG_G             => DMA_AXI_CONFIG_C,
+            SYNTH_MODE_G             => SYNTH_MODE_G)
          port map (
             sAxiClk         => axiClk,
             sAxiRst         => axiReset(i),
