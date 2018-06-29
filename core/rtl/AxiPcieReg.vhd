@@ -2,7 +2,7 @@
 -- File       : AxiPcieReg.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2017-03-06
--- Last update: 2018-04-23
+-- Last update: 2018-06-29
 -------------------------------------------------------------------------------
 -- Description: AXI-Lite Crossbar and Register Access
 -------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ entity AxiPcieReg is
    generic (
       TPD_G            : time                   := 1 ns;
       BUILD_INFO_G     : BuildInfoType;
-      SYNTH_MODE_G     : string                 := "xpm";
+      SYNTH_MODE_G     : string                 := "inferred";
       XIL_DEVICE_G     : string                 := "7SERIES";
       BOOT_PROM_G      : string                 := "BPI";
       DRIVER_TYPE_ID_G : slv(31 downto 0)       := x"00000000";

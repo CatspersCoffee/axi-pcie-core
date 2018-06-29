@@ -2,7 +2,7 @@
 -- File       : XilinxKcu1500Core.vhd
 -- Company    : SLAC National Accelerator Laboratory
 -- Created    : 2017-04-06
--- Last update: 2018-02-12
+-- Last update: 2018-06-29
 -------------------------------------------------------------------------------
 -- Description: AXI PCIe Core for KCU1500 board 
 --
@@ -37,6 +37,7 @@ entity XilinxKcu1500Core is
    generic (
       TPD_G            : time                  := 1 ns;
       BUILD_INFO_G     : BuildInfoType;
+      SYNTH_MODE_G     : string                := "inferred";
       DRIVER_TYPE_ID_G : slv(31 downto 0)      := x"00000000";
       DMA_SIZE_G       : positive range 1 to 8 := 1);
    port (
@@ -45,7 +46,7 @@ entity XilinxKcu1500Core is
       ------------------------
       userClk156      : out   sl;       -- 156.25 MHz
       userSwDip       : out   slv(3 downto 0);
-      userLed         : in    slv(7 downto 0) := x"80";
+      userLed         : in    slv(7 downto 0)                  := x"80";
       -- System Interface
       sysClk          : out   sl;
       sysRst          : out   sl;
@@ -234,6 +235,7 @@ begin
    U_REG : entity work.AxiPcieReg
       generic map (
          TPD_G            => TPD_G,
+         SYNTH_MODE_G     => SYNTH_MODE_G,
          BUILD_INFO_G     => BUILD_INFO_G,
          XIL_DEVICE_G     => "ULTRASCALE",
          BOOT_PROM_G      => "SPI",
@@ -323,9 +325,10 @@ begin
    ---------------   
    U_AxiPcieDma : entity work.AxiPcieDma
       generic map (
-         TPD_G            => TPD_G,
-         DMA_SIZE_G       => DMA_SIZE_G,
-         DESC_ARB_G       => false)  -- Round robin to help with timing @ 250 MHz system clock
+         TPD_G        => TPD_G,
+         SYNTH_MODE_G => SYNTH_MODE_G,
+         DMA_SIZE_G   => DMA_SIZE_G,
+         DESC_ARB_G   => false)  -- Round robin to help with timing @ 250 MHz system clock
       port map (
          -- Clock and reset
          axiClk           => sysClock,

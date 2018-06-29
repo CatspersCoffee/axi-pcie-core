@@ -30,7 +30,7 @@ entity AxiPcieDma is
    generic (
       TPD_G             : time                   := 1 ns;
       SIMULATION_G      : boolean                := false;
-      SYNTH_MODE_G      : string                 := "xpm";
+      SYNTH_MODE_G      : string                 := "inferred";
       MEMORY_TYPE_G     : string                 := "block";
       DMA_SIZE_G        : positive range 1 to 16 := 1;
       INT_PIPE_STAGES_G : natural range 0 to 1   := 1;
