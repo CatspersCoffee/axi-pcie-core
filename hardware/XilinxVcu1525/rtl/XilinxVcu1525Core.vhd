@@ -1,8 +1,6 @@
 -------------------------------------------------------------------------------
 -- File       : XilinxVcu1525Core.vhd
 -- Company    : SLAC National Accelerator Laboratory
--- Created    : 2018-01-29
--- Last update: 2018-02-12
 -------------------------------------------------------------------------------
 -- Description: AXI PCIe Core for VCU1525 board 
 --
@@ -46,15 +44,15 @@ entity XilinxVcu1525Core is
       --  Top Level Interfaces
       ------------------------
       -- System Interface
-      sysClk          : out   sl;
-      sysRst          : out   sl;
       userClk156      : out   sl;       -- 156.25 MHz
       -- DMA Interfaces  (sysClk domain)
+      dmaClk          : out   sl;
+      dmaRst          : out   sl;
       dmaObMasters    : out   AxiStreamMasterArray(7 downto 0);
       dmaObSlaves     : in    AxiStreamSlaveArray(7 downto 0);
       dmaIbMasters    : in    AxiStreamMasterArray(7 downto 0);
       dmaIbSlaves     : out   AxiStreamSlaveArray(7 downto 0);
-      -- Application AXI-Lite Interfaces [0x00800000:0x00FFFFFF] (appClk domain)
+      -- Application AXI-Lite Interfaces [0x00080000:0x00FFFFFF] (appClk domain)
       appClk          : in    sl;
       appRst          : in    sl;
       appReadMaster   : out   AxiLiteReadMasterType;
@@ -138,7 +136,7 @@ architecture mapping of XilinxVcu1525Core is
 
 begin
 
-   sysClk <= sysClock;
+   dmaClk <= sysClock;
 
    systemReset <= sysReset or cardReset;
 
@@ -148,7 +146,7 @@ begin
       port map (
          clk    => sysClock,
          rstIn  => systemReset,
-         rstOut => sysRst);
+         rstOut => dmaRst);
 
    U_IBUFDS : IBUFDS
       port map(
@@ -206,12 +204,13 @@ begin
    --------------- 
    U_REG : entity work.AxiPcieReg
       generic map (
-         TPD_G            => TPD_G,
-         BUILD_INFO_G     => BUILD_INFO_G,
-         XIL_DEVICE_G     => "ULTRASCALE",
-         BOOT_PROM_G      => "SPI",
-         DRIVER_TYPE_ID_G => DRIVER_TYPE_ID_G,
-         DMA_SIZE_G       => 8)
+         TPD_G             => TPD_G,
+         BUILD_INFO_G      => BUILD_INFO_G,
+         XIL_DEVICE_G      => "ULTRASCALE",
+         BOOT_PROM_G       => "SPI",
+         DRIVER_TYPE_ID_G  => DRIVER_TYPE_ID_G,
+         DMA_AXIS_CONFIG_G => DMA_AXIS_CONFIG_C,
+         DMA_SIZE_G        => 8)
       port map (
          -- AXI4 Interfaces
          axiClk              => sysClock,
@@ -249,25 +248,25 @@ begin
    U_STARTUPE3 : STARTUPE3
       generic map (
          PROG_USR      => "FALSE",  -- Activate program event security feature. Requires encrypted bitstreams.
-         SIM_CCLK_FREQ => 0.0)          -- Set the Configuration Clock Frequency(ns) for simulation
+         SIM_CCLK_FREQ => 0.0)  -- Set the Configuration Clock Frequency(ns) for simulation
       port map (
-         CFGCLK    => open,             -- 1-bit output: Configuration main clock output
+         CFGCLK    => open,  -- 1-bit output: Configuration main clock output
          CFGMCLK   => open,  -- 1-bit output: Configuration internal oscillator clock output
-         DI        => di,               -- 4-bit output: Allow receiving on the D[3:0] input pins
+         DI        => di,  -- 4-bit output: Allow receiving on the D[3:0] input pins
          EOS       => open,  -- 1-bit output: Active high output signal indicating the End Of Startup.
-         PREQ      => open,             -- 1-bit output: PROGRAM request to fabric output
-         DO        => do,               -- 4-bit input: Allows control of the D[3:0] pin outputs
-         DTS       => "1110",           -- 4-bit input: Allows tristate of the D[3:0] pins
-         FCSBO     => bootCsL(0),       -- 1-bit input: Contols the FCS_B pin for flash access
+         PREQ      => open,  -- 1-bit output: PROGRAM request to fabric output
+         DO        => do,  -- 4-bit input: Allows control of the D[3:0] pin outputs
+         DTS       => "1110",  -- 4-bit input: Allows tristate of the D[3:0] pins
+         FCSBO     => bootCsL(0),  -- 1-bit input: Contols the FCS_B pin for flash access
          FCSBTS    => '0',              -- 1-bit input: Tristate the FCS_B pin
          GSR       => '0',  -- 1-bit input: Global Set/Reset input (GSR cannot be used for the port name)
          GTS       => '0',  -- 1-bit input: Global 3-state input (GTS cannot be used for the port name)
          KEYCLEARB => '0',  -- 1-bit input: Clear AES Decrypter Key input from Battery-Backed RAM (BBRAM)
-         PACK      => '0',              -- 1-bit input: PROGRAM acknowledge input
+         PACK      => '0',  -- 1-bit input: PROGRAM acknowledge input
          USRCCLKO  => bootSck(0),       -- 1-bit input: User CCLK input
-         USRCCLKTS => '0',              -- 1-bit input: User CCLK 3-state enable input
-         USRDONEO  => '1',              -- 1-bit input: User DONE pin output control
-         USRDONETS => '0');             -- 1-bit input: User DONE 3-state enable output
+         USRCCLKTS => '0',  -- 1-bit input: User CCLK 3-state enable input
+         USRDONEO  => '1',  -- 1-bit input: User DONE pin output control
+         USRDONETS => '0');  -- 1-bit input: User DONE 3-state enable output
 
    do          <= "111" & bootMosi(0);
    bootMiso(0) <= di(1);
@@ -277,9 +276,10 @@ begin
    ---------------   
    U_AxiPcieDma : entity work.AxiPcieDma
       generic map (
-         TPD_G      => TPD_G,
-         DMA_SIZE_G => 8,
-         DESC_ARB_G => false)           -- Round robin to help with timing @ 250 MHz system clock
+         TPD_G             => TPD_G,
+         DMA_SIZE_G        => 8,
+         DMA_AXIS_CONFIG_G => DMA_AXIS_CONFIG_C,
+         DESC_ARB_G        => false)  -- Round robin to help with timing      
       port map (
          -- Clock and reset
          axiClk           => sysClock,
@@ -309,10 +309,8 @@ begin
       generic map (
          TPD_G => TPD_G)
       port map (
-         -- System Clock and reset
-         sysClk         => sysClock,
-         sysRst         => sysReset,
-         -- AXI MEM Interface (axiClk domain)
+         extRst         => sysReset,
+         -- AXI MEM Interface
          axiClk         => mig1Clk,
          axiRst         => mig1Rst,
          axiReady       => mig1Ready,
