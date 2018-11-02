@@ -36,6 +36,7 @@ entity XilinxKcu1500PcieExtendedCore is
       TPD_G             : time                  := 1 ns;
       BUILD_INFO_G      : BuildInfoType;
       DMA_AXIS_CONFIG_G : AxiStreamConfigType;
+      SYNTH_MODE_G      : string                := "inferred";
       DRIVER_TYPE_ID_G  : slv(31 downto 0)      := x"00000000";
       DMA_SIZE_G        : positive range 1 to 8 := 1);
    port (
@@ -152,6 +153,7 @@ begin
       generic map (
          TPD_G             => TPD_G,
          BUILD_INFO_G      => BUILD_INFO_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,   
          XIL_DEVICE_G      => "ULTRASCALE",
          BOOT_PROM_G       => "NONE",
          EN_DEVICE_DNA_G   => false,
@@ -196,6 +198,7 @@ begin
          TPD_G             => TPD_G,
          DMA_SIZE_G        => DMA_SIZE_G,
          DMA_AXIS_CONFIG_G => DMA_AXIS_CONFIG_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,
          DESC_ARB_G        => false)    -- Round robin to help with timing
       port map (
          axiClk           => sysClock,

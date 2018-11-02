@@ -206,6 +206,7 @@ begin
       generic map (
          TPD_G             => TPD_G,
          BUILD_INFO_G      => BUILD_INFO_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,         
          XIL_DEVICE_G      => "ULTRASCALE",
          BOOT_PROM_G       => "SPI",
          DRIVER_TYPE_ID_G  => DRIVER_TYPE_ID_G,
@@ -279,6 +280,7 @@ begin
          TPD_G             => TPD_G,
          DMA_SIZE_G        => 8,
          DMA_AXIS_CONFIG_G => DMA_AXIS_CONFIG_C,
+         SYNTH_MODE_G      => SYNTH_MODE_G,         
          DESC_ARB_G        => false)  -- Round robin to help with timing      
       port map (
          -- Clock and reset

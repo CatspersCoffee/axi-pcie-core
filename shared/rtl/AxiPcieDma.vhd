@@ -29,6 +29,8 @@ entity AxiPcieDma is
    generic (
       TPD_G             : time                  := 1 ns;
       SIMULATION_G      : boolean               := false;
+      SYNTH_MODE_G      : string                := "inferred";
+      MEMORY_TYPE_G     : string                := "block";
       DMA_SIZE_G        : positive range 1 to 8 := 1;
       DMA_AXIS_CONFIG_G : AxiStreamConfigType   := ssiAxiStreamConfig(16);
       INT_PIPE_STAGES_G : natural range 0 to 1  := 1;
@@ -132,6 +134,8 @@ begin
    U_V2Gen : entity work.AxiStreamDmaV2
       generic map (
          TPD_G             => TPD_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,
+         MEMORY_TYPE_G     => MEMORY_TYPE_G,
          SIMULATION_G      => SIMULATION_G,
          DESC_AWIDTH_G     => 12,       -- 4096 entries
          DESC_ARB_G        => DESC_ARB_G,
@@ -192,8 +196,10 @@ begin
             SLAVE_READY_EN_G    => true,
             VALID_THOLD_G       => 1,
             -- FIFO configurations
-            BRAM_EN_G           => true,
+            SYNTH_MODE_G        => SYNTH_MODE_G,
+            MEMORY_TYPE_G       => MEMORY_TYPE_G,
             GEN_SYNC_FIFO_G     => true,
+            CASCADE_SIZE_G      => 1,
             FIFO_ADDR_WIDTH_G   => 9,
             -- AXI Stream Port Configurations
             SLAVE_AXI_CONFIG_G  => DMA_AXIS_CONFIG_G,
@@ -221,8 +227,10 @@ begin
             SLAVE_READY_EN_G    => false,
             VALID_THOLD_G       => 1,
             -- FIFO configurations
-            BRAM_EN_G           => true,
+            SYNTH_MODE_G        => SYNTH_MODE_G,
+            MEMORY_TYPE_G       => MEMORY_TYPE_G,
             GEN_SYNC_FIFO_G     => true,
+            CASCADE_SIZE_G      => 1,
             FIFO_ADDR_WIDTH_G   => 9,
             FIFO_FIXED_THRESH_G => true,
             FIFO_PAUSE_THRESH_G => 300,  -- 1800 byte buffer before pause and 1696 byte of buffer before FIFO FULL

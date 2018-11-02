@@ -162,6 +162,7 @@ begin
       generic map (
          TPD_G             => TPD_G,
          BUILD_INFO_G      => BUILD_INFO_G,
+         SYNTH_MODE_G      => SYNTH_MODE_G,   
          XIL_DEVICE_G      => "7SERIES",
          BOOT_PROM_G       => "BPI",
          DRIVER_TYPE_ID_G  => DRIVER_TYPE_ID_G,
@@ -225,6 +226,7 @@ begin
          TPD_G             => TPD_G,
          DMA_SIZE_G        => DMA_SIZE_G,
          DMA_AXIS_CONFIG_G => DMA_AXIS_CONFIG_C,
+         SYNTH_MODE_G      => SYNTH_MODE_G,         
          DESC_ARB_G        => false,  -- Round robin to help with timing      
          INT_PIPE_STAGES_G => INT_PIPE_STAGES_G,
          PIPE_STAGES_G     => PIPE_STAGES_G)

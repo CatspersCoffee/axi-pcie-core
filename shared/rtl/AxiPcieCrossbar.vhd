@@ -22,7 +22,6 @@ use work.AxiPkg.all;
 entity AxiPcieCrossbar is
    generic (
       TPD_G             : time                  := 1 ns;
-      USE_XBAR_IPCORE_G : boolean               := true;
       AXI_DESC_CONFIG_G : AxiConfigType;
       AXI_DMA_CONFIG_G  : AxiConfigType;
       AXI_PCIE_CONFIG_G : AxiConfigType;
