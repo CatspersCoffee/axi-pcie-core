@@ -18,12 +18,10 @@ set_property board_part {xilinx.com:kcu1500:part0:1.1} [current_project]
 # Load shared source code
 loadRuckusTcl "$::DIR_PATH/../../shared"
 
-# Set the target language for Verilog (removes warning messages in PCIe IP core)
-set_property target_language Verilog [current_project]
-
 # Load local Source Code and Constraints
 loadSource      -dir  "$::DIR_PATH/rtl"
-loadConstraints -dir  "$::DIR_PATH/xdc"
+loadConstraints -path "$::DIR_PATH/xdc/XilinxKcu1500Core.xdc"
+loadConstraints -path "$::DIR_PATH/xdc/XilinxKcu1500App.xdc"
 
 # Load the primary PCIe core
 loadRuckusTcl "$::DIR_PATH/pcie"
