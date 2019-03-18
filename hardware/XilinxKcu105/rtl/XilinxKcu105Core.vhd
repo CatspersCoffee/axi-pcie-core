@@ -187,7 +187,7 @@ begin
          BUILD_INFO_G         => BUILD_INFO_G,
          SYNTH_MODE_G         => SYNTH_MODE_G,         
          XIL_DEVICE_G         => "ULTRASCALE",
-         BOOT_PROM_G          => "SPI",
+         BOOT_PROM_G          => "SPIx8",
          DRIVER_TYPE_ID_G     => DRIVER_TYPE_ID_G,
          DMA_AXIS_CONFIG_G    => DMA_AXIS_CONFIG_G,
          DMA_SIZE_G           => DMA_SIZE_G)
