@@ -29,7 +29,7 @@ entity AxiPcieReg is
       ROGUE_SIM_EN_G       : boolean                     := false;
       ROGUE_SIM_PORT_NUM_G : natural range 1024 to 49151 := 8000;
       BUILD_INFO_G         : BuildInfoType;
-      SYNTH_MODE_G         : string                 := "inferred";
+      SYNTH_MODE_G         : string                      := "inferred";
       DMA_AXIS_CONFIG_G    : AxiStreamConfigType;
       XIL_DEVICE_G         : string                      := "7SERIES";
       BOOT_PROM_G          : string                      := "BPI";
