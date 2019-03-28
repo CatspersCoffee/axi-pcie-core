@@ -36,6 +36,7 @@ entity XilinxKcu105Core is
       ROGUE_SIM_CH_COUNT_G : natural range 1 to 256      := 256;
       BUILD_INFO_G         : BuildInfoType;
       DMA_AXIS_CONFIG_G    : AxiStreamConfigType;
+      SYNTH_MODE_G         : string                      := "inferred";
       DRIVER_TYPE_ID_G     : slv(31 downto 0)            := x"00000000";
       DMA_SIZE_G           : positive range 1 to 8       := 1);
    port (

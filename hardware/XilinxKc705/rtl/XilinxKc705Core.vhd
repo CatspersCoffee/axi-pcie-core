@@ -42,6 +42,7 @@ entity XilinxKc705Core is
       ROGUE_SIM_CH_COUNT_G : natural range 1 to 256      := 256;
       BUILD_INFO_G         : BuildInfoType;
       DRIVER_TYPE_ID_G     : slv(31 downto 0)            := x"00000000";
+      SYNTH_MODE_G         : string                      := "inferred";
       DMA_SIZE_G           : positive range 1 to 8       := 1;
       INT_PIPE_STAGES_G    : natural range 0 to 1        := 0;
       PIPE_STAGES_G        : natural range 0 to 1        := 0);

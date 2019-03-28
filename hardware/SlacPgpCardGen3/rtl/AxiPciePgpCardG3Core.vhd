@@ -35,6 +35,7 @@ entity AxiPciePgpCardG3Core is
       ROGUE_SIM_PORT_NUM_G : natural range 1024 to 49151 := 8000;
       ROGUE_SIM_CH_COUNT_G : natural range 1 to 256      := 256;
       BUILD_INFO_G         : BuildInfoType;
+      SYNTH_MODE_G         : string                      := "inferred";
       DRIVER_TYPE_ID_G     : slv(31 downto 0)            := x"00000000";
       DMA_SIZE_G           : positive range 1 to 8       := 1;
       INT_PIPE_STAGES_G    : natural range 0 to 1        := 0;
